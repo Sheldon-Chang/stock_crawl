@@ -7,7 +7,7 @@ from method.method import *
 from db.method import *
 import random
 
-
+past_day = 365
 class InstitutionalInvestors:
     def __init__(self):
         self.twse_institutional_investors_url = 'https://www.twse.com.tw/fund/T86?response=csv&date='
@@ -19,7 +19,7 @@ class InstitutionalInvestors:
     def get_day_stock_info(self):
         index = 0
         today = datetime.today()
-        while index != 2:
+        while index != past_day:
             date = (today - timedelta(days=index)).strftime('%Y%m%d')
 
             index += 1
