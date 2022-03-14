@@ -6,7 +6,7 @@ import urllib
 from bs4 import BeautifulSoup
 import time
 
-engine = create_engine('postgresql://postgres:password@localhost:5432/stock')
+engine = create_engine('postgresql://ACCOUNT:PASSWORD@IP:PORT/DB_NAME')
 db = declarative_base()
 metadata = MetaData(engine)
 DBsession = sessionmaker(bind=engine)
@@ -119,7 +119,7 @@ def exist_check(filters):
 
 
 def save_to_db(df):
-    #create_stock_table()
+    create_stock_table()
     for index, data in df.iterrows():
         if not exist_check(Stock.stock_id == data['stock_id']):
             captial, shares, catalog = get_stock_profile(data['stock_id'])
@@ -129,28 +129,29 @@ def save_to_db(df):
                               captial=captial, shares=shares, catalog=catalog)
             insert([new_stock])
             create_trade_table(data['stock_id'])
-        # stock = stock_data(Base, data['stock_id'])
-        captial, shares, catalog = get_stock_profile(data['stock_id'])
-        print('here 1', captial, shares, catalog)
-        query_filter_and_update(Stock, data['stock_id'], {'catalog': catalog})
+        stock = stock_data(Base, data['stock_id'])
+        
+#         captial, shares, catalog = get_stock_profile(data['stock_id'])
+#         print('here 1', captial, shares, catalog)
+#         query_filter_and_update(Stock, data['stock_id'], {'catalog': catalog})
 
-        # trend_overbuy, trend_overbuy_propotion = get_stock_trend(data['stock_id'])
-        # tmp_data = stock(date=data['date'], stock_id=data['stock_id'], name=data['name'], volume=data['volume'],
-        #                  highest_price=data['highest_price'], lowest_price=data['lowest_price'],
-        #                  open_price=data['open_price'], end_price=data['end_price'],
-        #                  fi_overbuy=data['fi_overbuy'], it_overbuy=data['it_overbuy'],
-        #                  dealer_overbuy=data['dealer_overbuy'], dealer_overbuy_avoid=data['dealer_overbuy_avoid'],
-        #                  trend_overbuy=trend_overbuy, trend_overbuy_propotion=trend_overbuy_propotion)
+#         trend_overbuy, trend_overbuy_propotion = get_stock_trend(data['stock_id'])
+#         tmp_data = stock(date=data['date'], stock_id=data['stock_id'], name=data['name'], volume=data['volume'],
+#                          highest_price=data['highest_price'], lowest_price=data['lowest_price'],
+#                          open_price=data['open_price'], end_price=data['end_price'],
+#                          fi_overbuy=data['fi_overbuy'], it_overbuy=data['it_overbuy'],
+#                          dealer_overbuy=data['dealer_overbuy'], dealer_overbuy_avoid=data['dealer_overbuy_avoid'],
+#                          trend_overbuy=trend_overbuy, trend_overbuy_propotion=trend_overbuy_propotion)
 
-        # tmp_data = stock(date=data['date'], stock_id=data['stock_id'], name=data['name'], volume=data['volume'],
-        #                  highest_price=data['highest_price'], lowest_price=data['lowest_price'],
-        #                  open_price=data['open_price'], end_price=data['end_price'],
-        #                  fi_overbuy=data['fi_overbuy'], it_overbuy=data['it_overbuy'],
-        #                  dealer_overbuy=data['dealer_overbuy'], dealer_overbuy_avoid=data['dealer_overbuy_avoid'])
-        # if not exist_check(stock.date == data['date']):
-        #     insert([tmp_data])
-        # else:
-        #     merge(tmp_data)
+        tmp_data = stock(date=data['date'], stock_id=data['stock_id'], name=data['name'], volume=data['volume'],
+                         highest_price=data['highest_price'], lowest_price=data['lowest_price'],
+                         open_price=data['open_price'], end_price=data['end_price'],
+                         fi_overbuy=data['fi_overbuy'], it_overbuy=data['it_overbuy'],
+                         dealer_overbuy=data['dealer_overbuy'], dealer_overbuy_avoid=data['dealer_overbuy_avoid'])
+        if not exist_check(stock.date == data['date']):
+            insert([tmp_data])
+        else:
+            merge(tmp_data)
 
 
 def get_history_record(stock_id, time_interval, date=None):
