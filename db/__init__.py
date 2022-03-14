@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, Text, Fl
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-engine = create_engine('postgresql://postgres:password@localhost:5432/stock')
+engine = create_engine('postgresql://ACCOUNT:PASSWORD@IP:PORT/DB_NAME')
 metadata = MetaData(engine)
 DBsession = sessionmaker(bind=engine)
 session = DBsession()
